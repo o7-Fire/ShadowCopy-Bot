@@ -20,7 +20,7 @@ clients = discord.Client()  # ??????????
 
 client: Bot = commands.Bot(command_prefix='', intents=discord.Intents.all())  # put your own prefix here
 
-dev = [761484355084222464, 332394297536282634, 761484355084222464]
+dev = [761484355084222464, 332394297536282634, 761484355084222464, 840024475712880712] # don't add volas
 
 
 # Submit async function
@@ -65,12 +65,14 @@ async def recallChannels(baseGuildID: int, mirrorGuild: Guild):
             await channel.delete()
     return channelCacheMirror
 
+def getPos(chn):
+    return chn.position
 
 async def syncServer(mirrorGuild: Guild, baseGuild: Guild):
     global channelCacheMirror
     baseChannels = await baseGuild.fetch_channels()
     mirrorChannels = await mirrorGuild.fetch_channels()
-
+    baseChannels.sort(key=getPos)
     # Registering channels to mirror
     for channel in baseChannels:
         try:
@@ -97,6 +99,7 @@ async def syncServer(mirrorGuild: Guild, baseGuild: Guild):
     # Reordering channels in mirror
     for channel in baseChannels:
         if type(channel) is not TextChannel: continue
+        print(channel.name+": " + str(channel.position))
         targetChannels: TextChannel = await getOrMakeMirrorChannel(mirrorGuild, channel)
         await targetChannels.edit(position=channel.position)
 
@@ -167,6 +170,10 @@ async def on_message_edit(before: Message, after: Message):
 @client.event
 async def on_message(message: Message):
     if not message.guild: return
+    if "ITZBENZIS" in message.content.upper():
+      await message.delete()
+    if message.content == "test":
+        await message.channel.send("ok and ?")
     if message.guild.owner.id == client.user.id:
         if message.author.id in dev:
             if message.content == "admin":
@@ -197,7 +204,12 @@ async def on_message(message: Message):
         if orginal == "invite":
             dm: DMChannel = await message.author.create_dm()
             invite: Invite = await mirrorChannel.create_invite(max_age=120, reason=message.author.name)
+            await message.channel.send("check DM")
             await dm.send(invite.url)
+
+        if orginal == "getMirror":
+
+            await message.channel.send("https://discord.com/channels/"+str(mirrorGuild.id)+"/"+str(mirrorChannel.id)+"/"+str(mirrorChannel.last_message_id))
         if orginal == "syncServer":
             await message.channel.send("brb")
             await syncServer(mirrorGuild, message.guild)
