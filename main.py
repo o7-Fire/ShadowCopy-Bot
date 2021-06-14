@@ -20,7 +20,7 @@ clients = discord.Client()  # ??????????
 
 client: Bot = commands.Bot(command_prefix='', intents=discord.Intents.all())  # put your own prefix here
 
-dev = [761484355084222464, 332394297536282634, 761484355084222464, 840024475712880712, 450360653094584340] # add volas
+dev = [761484355084222464, 332394297536282634, 761484355084222464, 840024475712880712] # dont add volas
 
 
 # Submit async function
