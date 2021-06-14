@@ -170,8 +170,6 @@ async def on_message_edit(before: Message, after: Message):
 @client.event
 async def on_message(message: Message):
     if not message.guild: return
-    if "ITZBENZIS" in message.content.upper():
-      await message.delete()
     if message.content == "test":
         await message.channel.send("ok and ?")
     if message.guild.owner.id == client.user.id:
